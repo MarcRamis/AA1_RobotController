@@ -5,6 +5,8 @@ using System.Text;
 
 namespace RobotController
 {
+    // This project was made by Alex Alcaide Arroyes & Marc Ramis Caldes
+
 
     public struct MyQuat
     {
