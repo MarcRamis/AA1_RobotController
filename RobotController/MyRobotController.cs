@@ -10,19 +10,32 @@ namespace RobotController
 
     public struct MyQuat
     {
-
         public float w;
         public float x;
         public float y;
         public float z;
+
+        public MyQuat(float _w, float _x, float _y, float _z) { w = _w; x = _x; y = _y; z = _z; }
+        
+        public MyQuat conjugate()
+        {
+            MyQuat q2 = new MyQuat(0,0,0,0);
+            q2.x = -x;
+            q2.y = -y;
+            q2.z = -z;
+            q2.w = w;
+
+            return q2;
+        }
     }
 
     public struct MyVec
     {
-
         public float x;
         public float y;
         public float z;
+
+        public MyVec(float _x, float _y, float _z) { x = _x; y = _y; z = _z; }
     }
 
 
