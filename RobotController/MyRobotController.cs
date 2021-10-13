@@ -17,7 +17,7 @@ namespace RobotController
 
         public MyQuat(float _w, float _x, float _y, float _z) { w = _w; x = _x; y = _y; z = _z; }
         
-        public MyQuat conjugate()
+        public MyQuat Conjugate()
         {
             MyQuat q2 = new MyQuat(0,0,0,0);
             q2.x = -x;
@@ -27,6 +27,22 @@ namespace RobotController
 
             return q2;
         }
+
+        public float Length()
+        {
+            return (float)Math.Sqrt(w * w + x * x + y * y + z * z);
+        }
+
+        public MyQuat Normalized()
+        {
+            return new MyQuat(w / Length(), x / Length(), y / Length(), z / Length());
+        }
+
+        public MyQuat Add(MyQuat _q1)
+        {
+            return new MyQuat(w + _q1.w, x + _q1.x, y + _q1.y, z + _q1.z);
+        }
+
     }
 
     public struct MyVec
@@ -36,6 +52,16 @@ namespace RobotController
         public float z;
 
         public MyVec(float _x, float _y, float _z) { x = _x; y = _y; z = _z; }
+        public float Length()
+        {
+            return (float)Math.Sqrt(x * x + y * y + z * z);
+        }
+
+        public MyVec Normalized()
+        {
+            return new MyVec(x / Length(), y / Length(), z / Length());
+        }
+
     }
 
 
@@ -178,7 +204,11 @@ namespace RobotController
         internal MyQuat Multiply(MyQuat q1, MyQuat q2) {
 
             //todo: change this so it returns a multiplication:
-            return NullQ;
+            float w = (q1.w * q2.w) - (q1.x * q2.x) - (q1.y * q2.y) - (q1.z * q2.z);
+            float x = (q1.w * q2.x) + (q1.x * q2.w) - (q1.y * q2.z) + (q1.z * q2.y);
+            float y = (q1.w * q2.y) + (q1.x * q2.z) + (q1.y * q2.w) - (q1.z * q2.x);
+            float z = (q1.w * q2.z) - (q1.x * q2.y) + (q1.y * q2.x) + (q1.z * q2.w);
+            return new MyQuat(w, x, y, z);
 
         }
 
@@ -186,7 +216,12 @@ namespace RobotController
         {
 
             //todo: change this so it takes currentRotation, and calculate a new quaternion rotated by an angle "angle" radians along the normalized axis "axis"
-            return NullQ;
+            //axis = new MyVec(axis.x / axis.Length(), axis.y / axis.Length(), axis.z / axis.Length());
+            //float theta = (float)Math.Atan2(axis.y, axis.z);
+            return new MyQuat((float)Math.Cos(angle)/2,
+                axis.x * (float)Math.Sin(angle) / 2,
+                axis.y * (float)Math.Sin(angle) / 2,
+                axis.z * (float)Math.Sin(angle) / 2);
 
         }
 
