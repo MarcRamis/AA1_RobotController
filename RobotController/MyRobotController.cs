@@ -216,13 +216,11 @@ namespace RobotController
         {
 
             //todo: change this so it takes currentRotation, and calculate a new quaternion rotated by an angle "angle" radians along the normalized axis "axis"
-            //axis = new MyVec(axis.x / axis.Length(), axis.y / axis.Length(), axis.z / axis.Length());
-            //float theta = (float)Math.Atan2(axis.y, axis.z);
-            return new MyQuat((float)Math.Cos(angle)/2,
-                axis.x * (float)Math.Sin(angle) / 2,
-                axis.y * (float)Math.Sin(angle) / 2,
-                axis.z * (float)Math.Sin(angle) / 2);
 
+            return new MyQuat(currentRotation.w + (float)Math.Cos(angle/2),
+                currentRotation.x + axis.x * (float)Math.Sin(angle/2),
+                currentRotation.y + axis.y * (float)Math.Sin(angle/2),
+                currentRotation.z + axis.z * (float)Math.Sin(angle/2));
         }
 
 
