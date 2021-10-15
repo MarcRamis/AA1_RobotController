@@ -7,7 +7,6 @@ namespace RobotController
 {
     // This project was made by Alex Alcaide Arroyes & Marc Ramis Caldes
 
-
     public struct MyQuat
     {
         public float w;
@@ -61,7 +60,19 @@ namespace RobotController
         {
             return new MyVec(x / Length(), y / Length(), z / Length());
         }
+        public MyVec Cross(MyVec _vec1, MyVec _vec2)
+        {
+            float x, y, z;
+            x = _vec1.y * _vec2.z - _vec2.y * _vec1.z;
+            y = (_vec1.x * _vec2.z - _vec2.x * _vec1.z) * -1.0f;
+            z = _vec1.x * _vec2.y - _vec2.x * _vec1.y;
+            return new MyVec(x, y, z);
+        }
 
+        public float Dot(MyVec _vec1, MyVec _vec2)
+        {
+            return (_vec1.x * _vec2.x + _vec1.y * _vec2.y + _vec1.z * _vec2.z);
+        }
     }
 
 
@@ -78,8 +89,8 @@ namespace RobotController
 
         public string Hi()
         {
-
-            string s = "hello world from my Robot Controller";
+            
+            string s = "hello world from my Robot Controller. This project have been made by Alex Alcaide Arroyes & Marc Ramis Caldes";
             return s;
 
         }
@@ -90,10 +101,23 @@ namespace RobotController
         public void PutRobotStraight(out MyQuat rot0, out MyQuat rot1, out MyQuat rot2, out MyQuat rot3) {
 
             //todo: change this, use the function Rotate declared below
+            
+            MyVec vecY = new MyVec(0, 1, 0).Normalized();
+            MyVec vecX = new MyVec(1, 0, 0).Normalized();
+            float angle1 = Degrees2Rad(75);
+            float angle2 = Degrees2Rad(10);
+            float angle3 = Degrees2Rad(70);
+            float angle4 = Degrees2Rad(17);
+
             rot0 = NullQ;
             rot1 = NullQ;
             rot2 = NullQ;
             rot3 = NullQ;
+
+            rot0 = Rotate(rot0, vecY, angle1);
+            rot1 = Rotate(rot0, vecX, angle2);
+            rot2 = Rotate(rot1, vecX, angle3);
+            rot3 = Rotate(rot2, vecX, angle4);
         }
 
 
@@ -201,6 +225,15 @@ namespace RobotController
             }
         }
 
+        internal float Rad2Degrees(float rads)
+        {
+            return rads * (float)(180 / Math.PI);
+        }
+        internal float Degrees2Rad(float rads)
+        {
+            return rads * (float)(Math.PI / 180);
+        }
+
         internal MyQuat Multiply(MyQuat q1, MyQuat q2) {
 
             //todo: change this so it returns a multiplication:
@@ -217,15 +250,14 @@ namespace RobotController
 
             //todo: change this so it takes currentRotation, and calculate a new quaternion rotated by an angle "angle" radians along the normalized axis "axis"
 
-            return new MyQuat(currentRotation.w + (float)Math.Cos(angle/2),
-                currentRotation.x + axis.x * (float)Math.Sin(angle/2),
-                currentRotation.y + axis.y * (float)Math.Sin(angle/2),
-                currentRotation.z + axis.z * (float)Math.Sin(angle/2));
+            MyQuat rotatorQuat = new MyQuat((float)Math.Cos(angle / 2),
+                axis.x * (float)Math.Sin(angle / 2),
+                axis.y * (float)Math.Sin(angle / 2),
+                axis.z * (float)Math.Sin(angle / 2));
+
+            return Multiply(rotatorQuat,currentRotation);
         }
-
-
-
-
+        
         //todo: add here all the functions needed
 
         #endregion
