@@ -101,20 +101,23 @@ namespace RobotController
         public void PutRobotStraight(out MyQuat rot0, out MyQuat rot1, out MyQuat rot2, out MyQuat rot3) {
 
             //todo: change this, use the function Rotate declared below
+            
+            MyVec vecY = new MyVec(0, 1, 0).Normalized();
+            MyVec vecX = new MyVec(1, 0, 0).Normalized();
+            float angle1 = Degrees2Rad(75);
+            float angle2 = Degrees2Rad(10);
+            float angle3 = Degrees2Rad(70);
+            float angle4 = Degrees2Rad(17);
 
             rot0 = NullQ;
             rot1 = NullQ;
             rot2 = NullQ;
             rot3 = NullQ;
 
-            MyVec vec = new MyVec(0,1,0).Normalized();
-            float angle = Degrees2Rad(90);
-            float angl2 = Degrees2Rad(0);
-
-            rot0 = Rotate(rot0, vec, angle);
-            rot1 = Rotate(rot1, vec, angl2);
-            rot2 = Rotate(rot2, vec, angl2);
-            rot3 = Rotate(rot3, vec, angl2);
+            rot0 = Rotate(rot0, vecY, angle1);
+            rot1 = Rotate(rot0, vecX, angle2);
+            rot2 = Rotate(rot1, vecX, angle3);
+            rot3 = Rotate(rot2, vecX, angle4);
         }
 
 
