@@ -104,10 +104,10 @@ namespace RobotController
             
             MyVec vecY = new MyVec(0, 1, 0).Normalized();
             MyVec vecX = new MyVec(1, 0, 0).Normalized();
-            float angle1 = Degrees2Rad(75);
-            float angle2 = Degrees2Rad(10);
-            float angle3 = Degrees2Rad(70);
-            float angle4 = Degrees2Rad(17);
+            float angle1 = Degrees2Rad(73);
+            float angle2 = Degrees2Rad(0);
+            float angle3 = Degrees2Rad(67);
+            float angle4 = Degrees2Rad(34);
 
             rot0 = NullQ;
             rot1 = NullQ;
