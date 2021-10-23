@@ -322,7 +322,9 @@ namespace RobotController
         public static MyQuat GetTwist(MyQuat rot3)
         {
             //todo: change the return value for exercise 3
-            return NullQ;
+            MyQuat tempQuat = rot3;
+            MyQuat twist = new MyQuat(0, tempQuat.y, 0, tempQuat.w).Normalized();
+            return twist;
 
         }
 
