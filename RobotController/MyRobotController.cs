@@ -127,23 +127,23 @@ namespace RobotController
         public void PutRobotStraight(out MyQuat rot0, out MyQuat rot1, out MyQuat rot2, out MyQuat rot3) {
 
             //todo: change this, use the function Rotate declared below
-            
-            MyVec vecY = new MyVec(0, 1, 0).Normalized();
-            MyVec vecX = new MyVec(1, 0, 0).Normalized();
-            float angle1 = Degrees2Rad(73);
-            float angle2 = Degrees2Rad(0);
-            float angle3 = Degrees2Rad(67);
-            float angle4 = Degrees2Rad(34);
+
+            for (int i = 0; i < 4; i++)
+            {
+                phase2[i] = false;
+                phase3[i] = false;
+            }
+            angleTemp = new[] { 0.0f, 0.0f, 60.0f, 17.3f };
 
             rot0 = NullQ;
             rot1 = NullQ;
             rot2 = NullQ;
             rot3 = NullQ;
 
-            rot0 = Rotate(rot0, vecY, angle1);
-            rot1 = Rotate(rot0, vecX, angle2);
-            rot2 = Rotate(rot1, vecX, angle3);
-            rot3 = Rotate(rot2, vecX, angle4);
+            rot0 = Rotate(rot0, new MyVec(0, 1, 0).Normalized(), Degrees2Rad(73));
+            rot1 = Rotate(rot0, new MyVec(1, 0, 0).Normalized(), Degrees2Rad(0));
+            rot2 = Rotate(rot1, new MyVec(1, 0, 0).Normalized(), Degrees2Rad(67));
+            rot3 = Rotate(rot2, new MyVec(1, 0, 0).Normalized(), Degrees2Rad(34));
 
             
         }
@@ -156,8 +156,6 @@ namespace RobotController
 
         public bool PickStudAnim(out MyQuat rot0, out MyQuat rot1, out MyQuat rot2, out MyQuat rot3)
         {
-          
-
             bool myCondition = true;
             //todo: add a check for your condition
             rot0 = NullQ;
@@ -276,16 +274,6 @@ namespace RobotController
 
             //todo: remove this once your code works.
             
-
-            //if (doOnce)
-            //{
-            //    rot0 = Rotate(rot0, new MyVec(0, 1, 0).Normalized(), Degrees2Rad(0));
-            //    rot1 = Rotate(rot0, new MyVec(1, 0, 0).Normalized(), Degrees2Rad(0));
-            //    rot2 = Rotate(rot1, new MyVec(1, 0, 0).Normalized(), Degrees2Rad(60));
-            //    rot3 = Rotate(rot2, new MyVec(1, 0, 0).Normalized(), Degrees2Rad(17.3f));
-            //    doOnce = false;
-            //}
-
             return false;
         }
 
@@ -297,8 +285,15 @@ namespace RobotController
         public bool PickStudAnimVertical(out MyQuat rot0, out MyQuat rot1, out MyQuat rot2, out MyQuat rot3)
         {
 
-            bool myCondition = true;
+            bool myCondition = false;
             //todo: add a check for your condition
+
+            for (int i = 0; i < 4; i++)
+            {
+                phase2[i] = false;
+                phase3[i] = false;
+            }
+            angleTemp = new[] { 0.0f, 0.0f, 60.0f, 17.3f };
 
             rot0 = NullQ;
             rot1 = NullQ;
@@ -308,7 +303,7 @@ namespace RobotController
             while (myCondition)
             {
                 //todo: add your code here
-                if (phase2[0] && phase2[1] && phase2[2] && phase2[3])
+                /*if (phase2[0] && phase2[1] && phase2[2] && phase2[3])
                 {
                     if (angleTemp[0] > 40)
                     {
@@ -398,12 +393,12 @@ namespace RobotController
                 rot0 = Rotate(rot0, new MyVec(0, 1, 0).Normalized(), Degrees2Rad(angleTemp[0]));
                 rot1 = Rotate(rot0, new MyVec(1, 0, 0).Normalized(), Degrees2Rad(angleTemp[1]));
                 rot2 = Rotate(rot1, new MyVec(1, 0, 0).Normalized(), Degrees2Rad(angleTemp[2]));
-                rot3 = Rotate(rot2, new MyVec(1, 0, 0).Normalized(), Degrees2Rad(0.0f));
+                rot3 = Rotate(rot2, new MyVec(1, 0, 0).Normalized(), Degrees2Rad(angleTemp[3]));
 
                 if (phase3[0] && phase3[1] && phase3[2] && phase3[3])
                 {
                     return false;
-                }
+                }*/
 
                 return true;
 
@@ -498,40 +493,7 @@ namespace RobotController
 
         //todo: add here all the functions needed
 
-        bool LerpToDestination(float []_maxAngle, ref float []_tempAngle, bool []_isNewValueBigger, float _speed, int _numAngles)
-        {
-            bool[] phase = { false, false, false, false };
-            for(int i = 0; i < _numAngles; i++)
-            {
-                if(_isNewValueBigger[i])
-                {
-                    if (_tempAngle[i] < _maxAngle[i])
-                    {
-                        _tempAngle[i] += _speed;
-
-                    }
-                    else
-                    {
-                        phase[i] = true;
-                    }
-                }
-                else
-                {
-                    if (_tempAngle[i] > _maxAngle[i])
-                    {
-                        _tempAngle[i] -= _speed;
-
-                    }
-                    else
-                    {
-                        phase[i] = true;
-                    }
-                }
-                
-            }
-
-            return phase[0] && phase[1] && phase[2] && phase[3];
-        }
+        
 
 
         #endregion
