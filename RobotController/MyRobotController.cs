@@ -27,6 +27,13 @@ namespace RobotController
             return q2;
         }
 
+        public void ToAngleAxis(out float _angle, out MyVec _axis)
+        {
+            _angle = 2 * (float)Math.Acos(w);
+            _axis.x = x / (float)Math.Sqrt(1 - w * w);
+            _axis.y = y / (float)Math.Sqrt(1 - w * w);
+            _axis.z = z / (float)Math.Sqrt(1 - w * w);
+        }
         public float Length()
         {
             return (float)Math.Sqrt(w * w + x * x + y * y + z * z);
@@ -42,6 +49,22 @@ namespace RobotController
             return new MyQuat(w + _q1.w, x + _q1.x, y + _q1.y, z + _q1.z);
         }
 
+        public MyQuat AngleAxis(float _angle, MyVec _axis)
+        {
+            return new MyQuat((float)Math.Cos(_angle / 2),
+                _axis.x * (float)Math.Sin(_angle / 2),
+                _axis.y * (float)Math.Sin(_angle / 2),
+                _axis.z * (float)Math.Sin(_angle / 2));
+        }
+
+        public MyQuat MultiplyQuat(MyQuat q1, MyQuat q2)
+        {
+            float w = (q1.w * q2.w) - (q1.x * q2.x) - (q1.y * q2.y) - (q1.z * q2.z);
+            float x = (q1.w * q2.x) + (q1.x * q2.w) - (q1.y * q2.z) + (q1.z * q2.y);
+            float y = (q1.w * q2.y) + (q1.x * q2.z) + (q1.y * q2.w) - (q1.z * q2.x);
+            float z = (q1.w * q2.z) - (q1.x * q2.y) + (q1.y * q2.x) + (q1.z * q2.w);
+            return new MyQuat(w, x, y, z);
+        }
     }
 
     public struct MyVec
@@ -112,22 +135,15 @@ namespace RobotController
             }
             angleTemp = new[] { 0.0f, 0.0f, 60.0f, 17.3f };
 
-            MyVec vecY = new MyVec(0, 1, 0).Normalized();
-            MyVec vecX = new MyVec(1, 0, 0).Normalized();
-            float angle1 = Degrees2Rad(73);
-            float angle2 = Degrees2Rad(0);
-            float angle3 = Degrees2Rad(67);
-            float angle4 = Degrees2Rad(34);
-
             rot0 = NullQ;
             rot1 = NullQ;
             rot2 = NullQ;
             rot3 = NullQ;
 
-            rot0 = Rotate(rot0, vecY, angle1);
-            rot1 = Rotate(rot0, vecX, angle2);
-            rot2 = Rotate(rot1, vecX, angle3);
-            rot3 = Rotate(rot2, vecX, angle4);
+            rot0 = Rotate(rot0, new MyVec(0, 1, 0).Normalized(), Degrees2Rad(73));
+            rot1 = Rotate(rot0, new MyVec(1, 0, 0).Normalized(), Degrees2Rad(0));
+            rot2 = Rotate(rot1, new MyVec(1, 0, 0).Normalized(), Degrees2Rad(67));
+            rot3 = Rotate(rot2, new MyVec(1, 0, 0).Normalized(), Degrees2Rad(34));
 
             
         }
@@ -140,8 +156,6 @@ namespace RobotController
 
         public bool PickStudAnim(out MyQuat rot0, out MyQuat rot1, out MyQuat rot2, out MyQuat rot3)
         {
-          
-
             bool myCondition = true;
             //todo: add a check for your condition
             rot0 = NullQ;
@@ -156,21 +170,6 @@ namespace RobotController
                 rot1 = NullQ;
                 rot2 = NullQ;
                 rot3 = NullQ;
-
-                //if (doOnce)
-                //{
-                //    rot0 = Rotate(rot0, new MyVec(0, 1, 0).Normalized(), Degrees2Rad(0));
-                //    rot1 = Rotate(rot0, new MyVec(1, 0, 0).Normalized(), Degrees2Rad(0));
-                //    rot2 = Rotate(rot1, new MyVec(1, 0, 0).Normalized(), Degrees2Rad(60));
-                //    rot3 = Rotate(rot2, new MyVec(1, 0, 0).Normalized(), Degrees2Rad(17.3f));
-                //    doOnce = false;
-                //}
-
-                //if (LerpToDestination( new float[]{ 73, 0, 67, 34}, ref angleTemp, new bool[] { false, false, false, false }, 0.1f, 4))
-                //{
-
-                //}
-
 
                 if (phase2[0] && phase2[1] && phase2[2] && phase2[3])
                 {
@@ -275,16 +274,6 @@ namespace RobotController
 
             //todo: remove this once your code works.
             
-
-            //if (doOnce)
-            //{
-            //    rot0 = Rotate(rot0, new MyVec(0, 1, 0).Normalized(), Degrees2Rad(0));
-            //    rot1 = Rotate(rot0, new MyVec(1, 0, 0).Normalized(), Degrees2Rad(0));
-            //    rot2 = Rotate(rot1, new MyVec(1, 0, 0).Normalized(), Degrees2Rad(60));
-            //    rot3 = Rotate(rot2, new MyVec(1, 0, 0).Normalized(), Degrees2Rad(17.3f));
-            //    doOnce = false;
-            //}
-
             return false;
         }
 
@@ -299,12 +288,119 @@ namespace RobotController
             bool myCondition = false;
             //todo: add a check for your condition
 
+            for (int i = 0; i < 4; i++)
+            {
+                phase2[i] = false;
+                phase3[i] = false;
+            }
+            angleTemp = new[] { 0.0f, 0.0f, 60.0f, 17.3f };
 
+            rot0 = NullQ;
+            rot1 = NullQ;
+            rot2 = NullQ;
+            rot3 = NullQ;
 
             while (myCondition)
             {
                 //todo: add your code here
+                /*if (phase2[0] && phase2[1] && phase2[2] && phase2[3])
+                {
+                    if (angleTemp[0] > 40)
+                    {
+                        angleTemp[0] -= speed;
 
+                    }
+                    else
+                    {
+                        phase3[0] = true;
+                    }
+
+
+                    if (angleTemp[1] < 6)
+                    {
+                        angleTemp[1] += speed / 2;
+
+                    }
+                    else
+                    {
+                        phase3[1] = true;
+                    }
+
+                    if (angleTemp[2] < 70)
+                    {
+                        angleTemp[2] += speed;
+
+                    }
+                    else
+                    {
+                        phase3[2] = true;
+                    }
+
+                    if (angleTemp[3] > 1)
+                    {
+                        angleTemp[3] -= speed;
+
+                    }
+                    else
+                    {
+                        phase3[3] = true;
+                    }
+                }
+                else
+                {
+                    if (angleTemp[0] < 73)
+                    {
+                        angleTemp[0] += speed;
+
+                    }
+                    else
+                    {
+                        phase2[0] = true;
+                    }
+
+                    if (angleTemp[1] < 0)
+                    {
+                        angleTemp[1] += speed;
+
+                    }
+                    else
+                    {
+                        phase2[1] = true;
+                    }
+
+                    if (angleTemp[2] < 67)
+                    {
+                        angleTemp[2] += speed;
+
+                    }
+                    else
+                    {
+                        phase2[2] = true;
+                    }
+
+                    if (angleTemp[3] < 34)
+                    {
+                        angleTemp[3] += speed;
+
+                    }
+                    else
+                    {
+                        phase2[3] = true;
+                    }
+                }
+
+
+                rot0 = Rotate(rot0, new MyVec(0, 1, 0).Normalized(), Degrees2Rad(angleTemp[0]));
+                rot1 = Rotate(rot0, new MyVec(1, 0, 0).Normalized(), Degrees2Rad(angleTemp[1]));
+                rot2 = Rotate(rot1, new MyVec(1, 0, 0).Normalized(), Degrees2Rad(angleTemp[2]));
+                rot3 = Rotate(rot2, new MyVec(1, 0, 0).Normalized(), Degrees2Rad(angleTemp[3]));
+
+                if (phase3[0] && phase3[1] && phase3[2] && phase3[3])
+                {
+                    return false;
+                }*/
+
+                return true;
 
             }
 
@@ -321,7 +417,8 @@ namespace RobotController
         public static MyQuat GetSwing(MyQuat rot3)
         {
             //todo: change the return value for exercise 3
-            return NullQ;
+            MyQuat swing =  new MyQuat().MultiplyQuat(GetTwist(rot3).Conjugate(), rot3);
+            return swing;
 
         }
 
@@ -329,7 +426,8 @@ namespace RobotController
         public static MyQuat GetTwist(MyQuat rot3)
         {
             //todo: change the return value for exercise 3
-            return NullQ;
+            MyQuat twist = new MyQuat(0, rot3.y, 0, rot3.w).Normalized();
+            return twist;
 
         }
 
@@ -395,40 +493,7 @@ namespace RobotController
 
         //todo: add here all the functions needed
 
-        bool LerpToDestination(float []_maxAngle, ref float []_tempAngle, bool []_isNewValueBigger, float _speed, int _numAngles)
-        {
-            bool[] phase = { false, false, false, false };
-            for(int i = 0; i < _numAngles; i++)
-            {
-                if(_isNewValueBigger[i])
-                {
-                    if (_tempAngle[i] < _maxAngle[i])
-                    {
-                        _tempAngle[i] += _speed;
-
-                    }
-                    else
-                    {
-                        phase[i] = true;
-                    }
-                }
-                else
-                {
-                    if (_tempAngle[i] > _maxAngle[i])
-                    {
-                        _tempAngle[i] -= _speed;
-
-                    }
-                    else
-                    {
-                        phase[i] = true;
-                    }
-                }
-                
-            }
-
-            return phase[0] && phase[1] && phase[2] && phase[3];
-        }
+        
 
 
         #endregion
