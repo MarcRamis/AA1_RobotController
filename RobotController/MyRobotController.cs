@@ -116,7 +116,7 @@ namespace RobotController
         public string Hi()
         {
             
-            string s = "hello world from my Robot Controller. This project have been made by Alex Alcaide Arroyes & Marc Ramis Caldes";
+            string s = "hello world from my Robot Controller. This project has been made by Alex Alcaide Arroyes & Marc Ramis Caldes";
             return s;
 
         }
